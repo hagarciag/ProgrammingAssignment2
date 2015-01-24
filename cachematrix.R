@@ -1,38 +1,61 @@
-## Put comments here that give an overall description of what your
-## functions do
+## These functions cache the inverse of a matrix.
 
-## Write a short comment describing this function
+## This function creates a special "matrix" object that can cache its inverse
 
 makeCacheMatrix <- function(x = matrix()) {
+  
+  # The m variable contains the special "matrix" over which the inverse was computed
   m <- NULL
+
+  # The minverse variable contains the inverse of the special "matrix"
   minverse <- NULL
+  
+  # This function change the value of the current special "matrix", it is not
+  # necesarialy which the inverse was computed 
   set <- function(y) {
     x <<- y
   }
+  
   get <- function() x
   getm <- function() m
+  
+  # This function cache the value of a special matrix and its inverse
   setinversematrix <- function(inversematrix) {m <<- x; minverse <<- inversematrix}
-  getinversematrix <- function() m
+  
+  # This function returns the inverse cached of the a special matrix
+  getinversematrix <- function() minverse
   list(set = set, get = get, getm = getm,
        setinversematrix = setinversematrix,
        getinversematrix = getinversematrix)
   }
 
 
-## Write a short comment describing this function
+## This function computes the inverse of the special "matrix" 
+## returned by makeCacheMatrix above. If the inverse has already 
+## been calculated (and the matrix has not changed), then the 
+## cachesolve should retrieve the inverse from the cache.
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  
+  # The variable m is set with the special "matrix" over which the inverse was computed
   m <- x$getm()
+
+  # The variable inversem is set with the inverse of m (the previous variable)
   inversem <- x$getinversematrix()
-  currentm <- x$get()
-  if(!is.null(m) && identical(m, currentm)) {
-    message("getting cached data")
-    return(m)
-  }
+  
+  # The variable data is set with the current special "matrix".
   data <- x$get()
-  m <- solve(data, ...)
-  x$setinversematrix(m)
-  m
+  
+  # If the inverse has already been calculated and the matrix over which the inverse 
+  # was computed has not changed then retrieves the inverse from the cache
+  if(!is.null(m) && identical(m, data)) {
+    message("getting cached data")
+    return(inversem)
+  }
+  
+  # Computes and set the inverse
+  inversem <- solve(data, ...)  
+  x$setinversematrix(inversem)
+  inversem
 }
 
